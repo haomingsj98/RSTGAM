@@ -1,0 +1,16 @@
+citHeader("To cite RSTGAM in publications, please use:")
+
+citEntry(
+  entry = "Manual",
+  title = "RSTGAM: A Robust Spatiotemporal Epidemic Estimation Model with Outlier Detection",
+  author = personList(
+      person(given = "Haoming", family = "Shi", email = "hs75@rice.edu", role = c("aut", "cre")),
+      person(given = "Shan", family = "Yu", role = c("aut", "ctb")),
+      person(given = "Eric", family = "Chi", role = "aut")
+  ),
+  year = 2024,
+  note = "R package version 1.0",
+  url = "https://github.com/haomingsj98/RSTGAM"
+)
+
+citFooter("For more details, visit the GitHub repository.")

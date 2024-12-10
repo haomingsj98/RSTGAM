@@ -1,0 +1,24 @@
+---
+title: "Introduction to RSTGAM"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to RSTGAM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Overview
+
+The `RSTGAM` package provides tools for robust spatiotemporal epidemic modeling using splines. By introducing slack variables, it allows for outlier detection while estimating robust models for epidemics over time and space. This vignette demonstrates how to install the package, load the included example dataset, and use the main functions to fit a model.
+
+# Installation
+
+To install the package, you can use the following commands:
+
+```{r}
+# Install from CRAN (if available)
+install.packages("RSTGAM")
+
+# Or install the development version from GitHub
+#remotes::install_github("yourusername/RSTGAM")
+```
