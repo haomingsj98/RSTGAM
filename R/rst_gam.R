@@ -5,7 +5,7 @@
 #'
 #' @param Y matrix. The response variable.
 #' @param X matrix. The covariate matrix. Each column represents one covariate.
-#' @param X_t matrix. A matrix of time-changing covariates, e.g., the accumulated infected cases and human mobility, each column represents a covariate.
+#' @param X_t matrix. A matrix of time-changing covariates, e.g., the accumulated infected cases and human mobility, each column represents a covariate, default as null.
 #' @param S matrix. The location matrix. Each row indicates the location of one point.
 #' @param Tr matrix. The triangulation matrix. Each row indicates one triangle.
 #' @param V matrix. The vertices matrix of the triangulation.
@@ -53,17 +53,25 @@
 #' data(example_dataset)
 #' library(BPST)
 #'
-#' # Fit the model using RST_GAM with 1 data thinning fold
+#' # the lambda list for roughness
+#' lambda_start=0.01
+#' lambda_end1=50
+#' nlambda=10
+#' lambda1=exp(seq(log(lambda_start),log(lambda_end1),length.out=nlambda))/500
+#' # the lambda list for l1
+#' lambda_end2 = 100
+#' lambda2=exp(seq(log(lambda_start),log(lambda_end2),length.out=nlambda))/500
+#' 
+#' # Fit the model using RST_GAM with 0 data thinning fold
 #' result <- RST_GAM(
 #'   Y = example_dataset$Y,
 #'   X = example_dataset$X,
-#'   X_t = example_dataset$X_t,
 #'   S = example_dataset$S,
 #'   Tr = example_dataset$Tr,
 #'   V = example_dataset$V,
-#'   lambda1 = 0.1,
-#'   lambda2 = 0.1,
-#'   k = 1
+#'   lambda1 = lambda1,
+#'   lambda2 = lambda2,
+#'   k = 0
 #' )
 #'
 #'
@@ -78,7 +86,7 @@
 #' summary_plot$summary1 %>% ggplot(aes(x=X, y=Y, fill=Slack)) +
 #'   geom_point(alpha = 0.6) + 
 #'   ggtitle("Outlier Signal Estimation") + 
-#'   scale_colour_gradient(low = "#f7fbff", high = "#bd0026", name = "Outlier Signal")
+#'   scale_colour_gradient(low = "white", high = "#bd0026", name = "Outlier Signal")
 #'   
 #'
 #' # Plot the estimated bivariate component
@@ -147,7 +155,7 @@
 
 #' @export
 
-RST_GAM = function(Y,X,X_t,S,Tr,V,d=2,r=1,rho=2,knots=NULL,N=4,initial_x = NULL, k = 3,
+RST_GAM = function(Y,X,X_t=NULL,S,Tr,V,d=2,r=1,rho=2,knots=NULL,N=4,initial_x = NULL, k = 3,
                        lambda1, lambda2){
   
   family = poisson_fam()
@@ -183,9 +191,18 @@ RST_GAM = function(Y,X,X_t,S,Tr,V,d=2,r=1,rho=2,knots=NULL,N=4,initial_x = NULL,
   
   # generate basis function for X and X_t using univariate spline
   X=X[Ind, , drop = F]
-  X_t = X_t[((rep(0:(t-1), each = n)*nrow(S)) + rep(Ind, t)), , drop = F]
   
-  X_all = cbind(matrix(rep(t(X), t), ncol = ncol(X), byrow = T), X_t)
+  if(is.null(X_t)){
+    
+    X_all = matrix(rep(t(X), t), ncol = ncol(X), byrow = T)
+    
+  }else{
+    
+    X_t = X_t[((rep(0:(t-1), each = n)*nrow(S)) + rep(Ind, t)), , drop = F]
+    
+    X_all = cbind(matrix(rep(t(X), t), ncol = ncol(X), byrow = T), X_t)
+    
+  }
   
   X.p=dim(X_all)[2]
   XX=NULL

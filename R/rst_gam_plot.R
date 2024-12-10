@@ -39,23 +39,22 @@ RSTGAM_plot = function(model, uni_sample = 1000, S){
   
   # obtain the equally spaced points for each components
   p_ind = ncol(model$X)
-  p_dep = ncol(model$X_t)
+  X_t_exists = !is.null(model$X_t)  # Check if X_t is NULL
+  p_dep = if (X_t_exists) ncol(model$X_t) else 0
   nP = p_ind + p_dep
   X0 = matrix(0, ncol = nP, nrow = uni_sample)
   
-  # time independent components
+  # Time-independent components
   for (i in 1:p_ind) {
-    
-    X0[,i] = seq(min(model$X[,i]), max(model$X[,i]), length.out = uni_sample)
-    
+    X0[, i] = seq(min(model$X[, i]), max(model$X[, i]), length.out = uni_sample)
   }
   
-  # time dependent components
-  for (j in (p_ind+1):nP) {
-    
-    X0[,j] = seq(min(model$X_t[,(j-p_ind)]), 
-                 max(model$X_t[,(j-p_ind)]), length.out = uni_sample)
-    
+  # Time-dependent components (only if X_t is not NULL)
+  if (X_t_exists) {
+    for (j in (p_ind + 1):nP) {
+      X0[, j] = seq(min(model$X_t[, (j - p_ind)]), 
+                    max(model$X_t[, (j - p_ind)]), length.out = uni_sample)
+    }
   }
   
   # generate the basis matrix
