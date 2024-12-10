@@ -7,7 +7,7 @@
 RST_GAM(
   Y,
   X,
-  X_t,
+  X_t = NULL,
   S,
   Tr,
   V,
@@ -27,7 +27,7 @@ RST_GAM(
 
 \item{X}{matrix. The covariate matrix. Each column represents one covariate.}
 
-\item{X_t}{matrix. A matrix of time-changing covariates, e.g., the accumulated infected cases and human mobility, each column represents a covariate.}
+\item{X_t}{matrix. A matrix of time-changing covariates, e.g., the accumulated infected cases and human mobility, each column represents a covariate, default as null.}
 
 \item{S}{matrix. The location matrix. Each row indicates the location of one point.}
 
@@ -84,17 +84,25 @@ This function fits the robust ggam estimation model to account for potentail out
 data(example_dataset)
 library(BPST)
 
-# Fit the model using RST_GAM with 1 data thinning fold
+# the lambda list for roughness
+lambda_start=0.01
+lambda_end1=50
+nlambda=10
+lambda1=exp(seq(log(lambda_start),log(lambda_end1),length.out=nlambda))/500
+# the lambda list for l1
+lambda_end2 = 100
+lambda2=exp(seq(log(lambda_start),log(lambda_end2),length.out=nlambda))/500
+
+# Fit the model using RST_GAM with 0 data thinning fold
 result <- RST_GAM(
   Y = example_dataset$Y,
   X = example_dataset$X,
-  X_t = example_dataset$X_t,
   S = example_dataset$S,
   Tr = example_dataset$Tr,
   V = example_dataset$V,
-  lambda1 = 0.1,
-  lambda2 = 0.1,
-  k = 1
+  lambda1 = lambda1,
+  lambda2 = lambda2,
+  k = 0
 )
 
 
@@ -109,7 +117,7 @@ summary_plot <- RSTGAM_plot(result, S = example_dataset$S)
 summary_plot$summary1 \%>\% ggplot(aes(x=X, y=Y, fill=Slack)) +
   geom_point(alpha = 0.6) + 
   ggtitle("Outlier Signal Estimation") + 
-  scale_colour_gradient(low = "#f7fbff", high = "#bd0026", name = "Outlier Signal")
+  scale_colour_gradient(low = "white", high = "#bd0026", name = "Outlier Signal")
   
 
 # Plot the estimated bivariate component
