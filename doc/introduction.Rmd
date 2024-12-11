@@ -36,7 +36,7 @@ library(BPST)
 ```
 
 # Example
-We demonstrate the usage of the package by simulating a spatiotemporal dataset with $n = 1000$ locations and 3 time points. The `Simulation_Data` function creates the example dataset, with 50 outliers generated at random locations. Below is a plot of the simulated response variables $Y$ at time $t=3$.
+We demonstrate the usage of the package by simulating a spatiotemporal dataset with $n = 500$ locations and 3 time points. The `Simulation_Data` function creates the example dataset, with 20 outliers of value 100 generated at random locations. Below is a plot of the simulated response variables $Y$ at time $t=3$.
 ```{r}
 
 set.seed(123)

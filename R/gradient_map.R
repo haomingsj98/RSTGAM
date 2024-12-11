@@ -13,13 +13,10 @@
 #' @return A numeric vector of the gradient map.
 #' 
 #' @useDynLib RSTGAM, .registration = TRUE
-#' @import RcppArmadillo
-#' @importFrom Rcpp evalCpp
 #' 
 #' 
 #' @keywords internal
 
-# @importFrom Rcpp sourceCpp
 gradient_map <- function(Y, X, BQ2, P, cur_x, lambda1, theta_nb = 0){
   
   family = poisson_fam()

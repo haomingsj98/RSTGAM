@@ -54,13 +54,9 @@
 #' library(BPST)
 #'
 #' # the lambda list for roughness
-#' lambda_start=0.01
-#' lambda_end1=50
-#' nlambda=5
-#' lambda1=exp(seq(log(lambda_start),log(lambda_end1),length.out=nlambda))/500
+#' lambda1=0.1
 #' # the lambda list for l1
-#' lambda_end2 = 100
-#' lambda2=exp(seq(log(lambda_start),log(lambda_end2),length.out=nlambda))/500
+#' lambda2=0.02
 #' 
 #' # Fit the model using RST_GAM with 0 data thinning fold
 #' result <- RST_GAM(
@@ -83,14 +79,14 @@
 #' summary_plot <- RSTGAM_plot(result, S = example_dataset$S)
 #' 
 #' # Plot the identified outliers with corresponding estimated slack values
-#' summary_plot$summary1 %>% ggplot(aes(x=X, y=Y, fill=Slack)) +
+#' summary_plot$summary1 %>% ggplot(aes(x=X, y=Y, color=Slack)) +
 #'   geom_point(alpha = 0.6) + 
 #'   ggtitle("Outlier Signal Estimation") + 
 #'   scale_colour_gradient(low = "white", high = "#bd0026", name = "Outlier Signal")
 #'   
 #'
 #' # Plot the estimated bivariate component
-#' summary_plot$summary1 %>% ggplot(aes(x=X, y=Y, fill=Beta)) +
+#' summary_plot$summary1 %>% ggplot(aes(x=X, y=Y, color=Beta)) +
 #'   geom_point(alpha = 0.6) + 
 #'   ggtitle("Bivariate Component Estimation") + 
 #'   scale_colour_gradient(low = "#7fcdbb", high = "#bd0026", 

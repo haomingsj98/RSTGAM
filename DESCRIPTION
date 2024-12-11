@@ -1,5 +1,5 @@
 Package: RSTGAM
-Title: Robust Spatiotemporal Epidemic Esimation Model with Outlier Detection
+Title: Robust Spatiotemporal Epidemic Estimation Model with Outlier Detection
 Version: 1.0
 Authors@R: 
     c(
@@ -17,17 +17,17 @@ Imports:
     splines (>= 4.3.1),
     bindata,
     Matrix (>= 1.5.0),
-    tibble,
-    Rcpp,
-    RcppArmadillo
-Remotes:
-    FIRST-Data-Lab/BPST
+    tibble
 Suggests:
+    remotes,
+    Triangulation,
+    latex2exp,
     ggplot2,
     dplyr,
     knitr,
-    rmarkdown,
-    testpackage
+    rmarkdown
+Remotes:
+    FIRST-Data-Lab/BPST
 LinkingTo:
     Rcpp,
     RcppArmadillo
