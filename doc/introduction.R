@@ -64,9 +64,9 @@ TriPlot(V, Tr)
 
 ## ----warning=FALSE------------------------------------------------------------
 # the lambda list for roughness
-lambda_start=0.01
+lambda_start=0.1
 lambda_end1=30
-nlambda=5
+nlambda=3
 lambda1=exp(seq(log(lambda_start),log(lambda_end1),length.out=nlambda))/1500
 
 # the lambda list for l1
