@@ -112,12 +112,12 @@ V=example_dataset$V
 TriPlot(V, Tr)
 ```
 
-Below, we run our model using the specified parameters and display the outlier detection results in a confusion table. The model successfully identifies all simulated outliers, with only one incorrect classification of a non-outlier location.
+Below, we run our model using the specified parameters and display the outlier detection results in a confusion table. The model successfully identifies all simulated outliers and no incorrect classification of a non-outlier location.
 ```{r, warning=FALSE}
 # the lambda list for roughness
 lambda_start=0.1
 lambda_end1=30
-nlambda=3
+nlambda=5
 lambda1=exp(seq(log(lambda_start),log(lambda_end1),length.out=nlambda))/1500
 
 # the lambda list for l1
