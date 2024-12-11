@@ -35,15 +35,15 @@ RST_GAM(
 
 \item{V}{matrix. The vertices matrix of the triangulation.}
 
-\item{d}{integer. The degree of the bivariate spline.}
+\item{d}{integer. The degree of the bivariate spline, default as 2.}
 
-\item{r}{integer. The smoothness of the bivariate spline.}
+\item{r}{integer. The smoothness of the bivariate spline, default as 1.}
 
-\item{rho}{integer. The degree of the univariate spline.}
+\item{rho}{integer. The degree of the univariate spline, default as 2.}
 
 \item{knots}{matrix. The knots matrix of the univariate spline. Usually, it is a (N+2) x p matrix. The r-th column is the knots of r-th covariate. The first element and the last element are the boundary knots.}
 
-\item{N}{integer. The number of interior knots.}
+\item{N}{integer. The number of interior knots, default as 4.}
 
 \item{initial_x}{numeric vector. The initial value for the parameter, default is 0.}
 
@@ -87,7 +87,7 @@ library(BPST)
 # the lambda list for roughness
 lambda_start=0.01
 lambda_end1=50
-nlambda=10
+nlambda=5
 lambda1=exp(seq(log(lambda_start),log(lambda_end1),length.out=nlambda))/500
 # the lambda list for l1
 lambda_end2 = 100

@@ -9,11 +9,11 @@
 #' @param S matrix. The location matrix. Each row indicates the location of one point.
 #' @param Tr matrix. The triangulation matrix. Each row indicates one triangle.
 #' @param V matrix. The vertices matrix of the triangulation.
-#' @param d integer. The degree of the bivariate spline.
-#' @param r integer. The smoothness of the bivariate spline.
-#' @param rho integer. The degree of the univariate spline.
+#' @param d integer. The degree of the bivariate spline, default as 2.
+#' @param r integer. The smoothness of the bivariate spline, default as 1.
+#' @param rho integer. The degree of the univariate spline, default as 2.
 #' @param knots matrix. The knots matrix of the univariate spline. Usually, it is a (N+2) x p matrix. The r-th column is the knots of r-th covariate. The first element and the last element are the boundary knots.
-#' @param N integer. The number of interior knots.
+#' @param N integer. The number of interior knots, default as 4.
 #' @param initial_x numeric vector. The initial value for the parameter, default is 0.
 #' @param k The number data thinning folds, default as 3.
 #' @param lambda1 numeric. The roughness penalty parameter for bivariate spline estimation.
@@ -56,7 +56,7 @@
 #' # the lambda list for roughness
 #' lambda_start=0.01
 #' lambda_end1=50
-#' nlambda=10
+#' nlambda=5
 #' lambda1=exp(seq(log(lambda_start),log(lambda_end1),length.out=nlambda))/500
 #' # the lambda list for l1
 #' lambda_end2 = 100
@@ -231,7 +231,7 @@ RST_GAM = function(Y,X,X_t=NULL,S,Tr,V,d=2,r=1,rho=2,knots=NULL,N=4,initial_x = 
   
   ####################### stage 2 weights construction ###############################
   
-  print('Stage 1: Weight Construction')
+  print('Stage 2: Weight Construction')
   
   # if no slice, just perform naive Lasso with weights 1
   if(k == 0){

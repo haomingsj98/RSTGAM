@@ -28,4 +28,7 @@
 #' Tr <- example_dataset$Tr
 #' V <- example_dataset$V
 #' 
+#' # The detailed univarite and bivariate components used in this simulated data
+#' # are presented in the vignette.
+#' 
 "example_dataset"
