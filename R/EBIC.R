@@ -43,11 +43,11 @@ l_likelihood = function(xi_is, Y_it, mu_t){
 #' @param xi_is: the estimated slack variables from a given model
 #' @param Y_it: a n by t matrix representing the observations (counts) at time t (column) and location i (row) description
 #' @param mu_t: a size n (location) vector representing the value of mean counts at time t description
-#' @param gamma: a regulatory parameter, default as 0, note, when gamma is 0, we obtain BIC
+#' @param gamma: a regulatory parameter, note, when gamma is 0, we obtain BIC
 #' @return a value represent the eBIC
 #' @keywords internal
 #' 
-EBIC_L = function(X, BQ2, P, xi_is, Y_it, mu_t, gamma = 0){
+EBIC_L = function(X, BQ2, P, xi_is, Y_it, mu_t, gamma = 1){
   
   # obtain the (log) quasi_likelihood of the model
   log_likelihood = l_likelihood(xi_is, Y_it, mu_t)
