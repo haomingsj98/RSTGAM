@@ -4,7 +4,7 @@
 \alias{EBIC_L}
 \title{this function compute the EBIC measure of the Lasso penalty}
 \usage{
-EBIC_L(X, BQ2, P, xi_is, Y_it, mu_t, gamma = 0)
+EBIC_L(X, BQ2, P, xi_is, Y_it, mu_t, gamma = 1)
 }
 \arguments{
 \item{X:}{the univariate basis function matrix}
@@ -19,7 +19,7 @@ EBIC_L(X, BQ2, P, xi_is, Y_it, mu_t, gamma = 0)
 
 \item{mu_t:}{a size n (location) vector representing the value of mean counts at time t description}
 
-\item{gamma:}{a regulatory parameter, default as 0, note, when gamma is 0, we obtain BIC}
+\item{gamma:}{a regulatory parameter, note, when gamma is 0, we obtain BIC}
 }
 \value{
 a value represent the eBIC
