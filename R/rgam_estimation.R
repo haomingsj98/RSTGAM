@@ -1,6 +1,4 @@
 
-
-
 #' this function is an intermediate step of model estimation procedure, implementing the gradient descent to get parameter estimates 
 #'
 #' @param Y: the response variable.
@@ -63,12 +61,18 @@ rgam_estimation = function(Y,X,BQ2,P,lambda1, lambda2, initial_x = NULL, w){
   tol = norm(cur_x - pre_x, 'F')
 
   k = 1
+  t_curr = 1 # step size for momentum update
   
   # start the algorithm
   while (tol > 10^-5 & k <= 10^5) {
     
+    # momentum step
+    t_next   <- (1 + sqrt(1 + 4*t_curr^2)) / 2
+    momentum <- (t_curr - 1) / t_next
+    
     # the momentum computation
-    cur_y = cur_x + (k-2) * (cur_x - pre_x)/(k+1) 
+    #cur_y = cur_x + (k-2) * (cur_x - pre_x)/(k+1) 
+    cur_y = cur_x + momentum * (cur_x - pre_x)
     
     # compute current gradient
     cur_gradient = gradient_map(Y, X, BQ2, P, cur_x = cur_y, lambda1 = lambda1)
@@ -105,6 +109,13 @@ rgam_estimation = function(Y,X,BQ2,P,lambda1, lambda2, initial_x = NULL, w){
     
     # update previous alpha
     pre_alpha = cur_alpha
+    
+    if(sum((next_x - cur_x)*(cur_x - pre_x)) > 0){
+      t_curr = 1
+    }else{
+      
+      t_curr = t_next
+    }
     
     # update x
     pre_x = cur_x
