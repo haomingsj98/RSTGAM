@@ -110,13 +110,6 @@ rgam_estimation = function(Y,X,BQ2,P,lambda1, lambda2, initial_x = NULL, w){
     # update previous alpha
     pre_alpha = cur_alpha
     
-    if(sum((next_x - cur_x)*(cur_x - pre_x)) > 0){
-      t_curr = 1
-    }else{
-      
-      t_curr = t_next
-    }
-    
     # update x
     pre_x = cur_x
     cur_x = next_x
@@ -128,6 +121,8 @@ rgam_estimation = function(Y,X,BQ2,P,lambda1, lambda2, initial_x = NULL, w){
     pre_gradient = cur_gradient
     
     k = k + 1
+
+    t_curr = t_next
 
   }
 
