@@ -64,7 +64,7 @@ rgam_estimation = function(Y,X,BQ2,P,lambda1, lambda2, initial_x = NULL, w){
   t_curr = 1 # step size for momentum update
   
   # start the algorithm
-  while (tol > 10^-5 & k <= 10^5) {
+  while (tol > 10^-6 & k <= 10^5) {
     
     # momentum step
     t_next   <- (1 + sqrt(1 + 4*t_curr^2)) / 2
