@@ -1,5 +1,5 @@
 
-# Robust Spatiotemporal Epidemic Esimation Model with Outlier Detection
+# Robust Spatiotemporal Epidemic Modeling with Integrated Adaptive Outlier Detection
 
 <!-- badges: start -->
 <!-- badges: end -->
