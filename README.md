@@ -16,5 +16,5 @@ devtools::install_github("haomingsj98/RSTGAM")
 
 ## Example
 
-Please check the [GitHub page](https://github.com/haomingsj98/RSTGAM) for a detailed example on how to implement the model.
+Please check the [GitHub page](https://github.com/haomingsj98/RSTGAM/doc/introduction.pdf) for a detailed example on how to implement the model.
 
