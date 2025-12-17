@@ -1,23 +1,27 @@
 
 #' Fit the Global Estimation Model (RST_GAM)
 #'
-#' This function fits the robust ggam estimation model to account for potentail outliers using bivariate and univariate splines.
+#' This function fits the robust ggam estimation model to account for potential outliers using bivariate and univariate splines.
 #'
 #' @param Y matrix. The response variable.
 #' @param X matrix. The covariate matrix. Each column represents one covariate.
-#' @param X_t matrix. A matrix of time-changing covariates, e.g., the accumulated infected cases and human mobility, each column represents a covariate, default as null.
+#' @param X_t matrix. A matrix of time-changing covariates, e.g., the accumulated infected cases and human mobility, each column represents a covariate. Default is NULL.
 #' @param S matrix. The location matrix. Each row indicates the location of one point.
 #' @param Tr matrix. The triangulation matrix. Each row indicates one triangle.
 #' @param V matrix. The vertices matrix of the triangulation.
-#' @param d integer. The degree of the bivariate spline, default as 2.
-#' @param r integer. The smoothness of the bivariate spline, default as 1.
-#' @param rho integer. The degree of the univariate spline, default as 2.
+#' @param d integer. The degree of the bivariate spline, default is 2.
+#' @param r integer. The smoothness of the bivariate spline, default is 1.
+#' @param rho integer. The degree of the univariate spline, default is 2.
 #' @param knots matrix. The knots matrix of the univariate spline. Usually, it is a (N+2) x p matrix. The r-th column is the knots of r-th covariate. The first element and the last element are the boundary knots.
-#' @param N integer. The number of interior knots, default as 4.
+#' @param N integer. The number of interior knots, default is 4.
 #' @param initial_x numeric vector. The initial value for the parameter, default is 0.
-#' @param k The number data thinning folds, default as 3.
+#' @param k integer. The number data thinning folds, default is 3.
 #' @param lambda1 numeric. The roughness penalty parameter for bivariate spline estimation.
 #' @param lambda2 numeric. The L1 penalty term for the slack variable.
+#' @param negative_binomial logical. Whether to fit Negative binomial model.
+#' @param theta_range vector. A size 2 vector recording the range for hyperparameter of nb family (default is NULL - Poisson Family). If negative_binomial is TRUE and theta_range is not given, default is (1,10).
+#' @param using_fix_weight logical. Whether to use poisson weight in the NB model to allow fast computation.
+#' @param verbose logical. Whether to report model fit message.
 #'
 #' @return A list containing the following elements:
 #' \item{theta_hat}{coefficients estimated for univariate functions.}
@@ -40,15 +44,16 @@
 #' \item{U}{univariate spline basis matrix.}
 #' \item{BQ}{bivariate spline basis matrix.}
 #' \item{P}{energy matrix for bivariate spline.}
+#' \item{theta_nb}{the theta parameter for nb family, Null if fit quasi-poisson model}
 #'
 #' @import BPST
 #' @import mgcv
 #' @import splines
 #' @import bindata
-#' @importFrom stats rmultinom 
 #' 
 #' 
 #' @examples
+#' \donttest{
 #' # Load the example dataset
 #' data(example_dataset)
 #' library(BPST)
@@ -146,25 +151,27 @@
 #' sum((beta0.1-mhat[,1])^2)/1000
 #' sum((beta0.2-mhat[,2])^2)/1000
 #' sum((beta0.3-mhat[,3])^2)/1000
-#'
+#'}
 #'
 
 #' @export
 
 RST_GAM = function(Y,X,X_t=NULL,S,Tr,V,d=2,r=1,rho=2,knots=NULL,N=4,initial_x = NULL, k = 3,
-                       lambda1, lambda2){
+                       lambda1, lambda2, negative_binomial = FALSE, theta_range = NULL, using_fix_weight = TRUE, verbose = FALSE){
   
-  family = poisson_fam()
-  variance = family$variance
-  linkinv = family$linkinv
+  if (negative_binomial & is.null(theta_range)){
+    theta_range = c(0.01, 10) # default theta value for nb family
+  }
 
   # number of data sample
   t = ncol(Y)
   
   ####################### stage 1 Spline Construction ###############################
   
-  print('Stage 1: Construct Basis Splines')
-  
+  if(verbose) message('Stage 1: Construct Basis Splines')
+  if (!requireNamespace("BPST", quietly = TRUE)) {
+    stop("The 'BPST' package is required but not installed. Please install it using remotes::install_github('FIRST-Data-Lab/BPST').")
+  }
   # generate basis function for S using bivariate spline
   ## bivariate spline basis matrix
   B0=basis(V,Tr,d,r,S)
@@ -223,80 +230,34 @@ RST_GAM = function(Y,X,X_t=NULL,S,Tr,V,d=2,r=1,rho=2,knots=NULL,N=4,initial_x = 
   XX_all=as.matrix(XX)
   colnames(XX_all) = NULL
   
-  print('Stage 1 Done')
+  if(verbose) message('Stage 1 Done')
   
-  ####################### stage 2 weights construction ###############################
+  ####################### stage 2 Model Fitting ###############################
   
-  print('Stage 2: Weight Construction')
-  
-  # if no slice, just perform naive Lasso with weights 1
-  if(k == 0){
+  if(verbose) message('Stage 2: Model Fitting')
+  if (negative_binomial){
+    if(verbose) message(sprintf('Fit Negative Binomial Model with Theta Range: [%s, %s]', theta_range[1], theta_range[2]))
     
-    final_w = rep(1, length(Ind))
-    
-  }else{
-    # perform k-fold data thinning
-    Y_slice = sapply(c(Y), rmultinom, n = 1, prob = rep(1/k, k))
-    
-    # set default weight for slack estimates
-    final_w = rep(0, length(Ind))
-    
-    
-    for (i in 1:k) {
-      
-      # the i-th slice
-      if(k == 1){
-        
-        Y_i = Y
-        
-      }else{
-        
-        Y_i = matrix(Y_slice[i,], ncol = t)
-        
-      }
-      
-      # run the model
-      cur_result = rgam_lambda_selection(Y_i, XX_all, stack_BQ2, P, lambda1, lambda2, initial_x, w = rep(1, length(Ind)))
-      
-      # record the slack estimates
-      final_w = final_w + as.vector(cur_result$xi_hat)
-      
+    # construct weights using Poisson model
+    if (using_fix_weight){
+      detected_weights = RST_GAM_poisson(Y, XX_all, stack_BQ2, P, lambda1, lambda2, initial_x, k, Ind, fix_weight = NULL, report_weight = TRUE)
+    }else{
+      detected_weights = NULL
     }
-    
-    # obtain final weights
-    final_w = 1/(final_w/k)
-    
+  
+    # fit nb model with fixed slack weight
+    final_result = RST_GAM_nb(Y, XX_all, stack_BQ2, P, lambda1, lambda2, initial_x, k, Ind, theta_range = theta_range, fix_weight = detected_weights)
+  }
+  else{
+    if(verbose) message('Fit (Quasi)-Poisson Model')
+    # fit quasi-poisson model
+    final_result = RST_GAM_poisson(Y, XX_all, stack_BQ2, P, lambda1, lambda2, initial_x, k, Ind)
+    final_result$theta_nb = NULL
   }
   
-  print('Stage 2 done')
+  if(verbose) message('Stage 2 done')
   
-  ################################### Stage 3 Full Model Construction #########################################
-
-  print('Stage 3: Penalization Parameter Selection')
   
-  # compute weighted estimation with Y2 to get penalization parameters
-  final_result = rgam_lambda_selection(Y, XX_all, stack_BQ2, P, lambda1, lambda2, initial_x, w = final_w)
-  
-  final_rlambda = final_result$r_lambda
-  final_llambda = final_result$l_lambda
-  
-  final_result$mu_hat = linkinv(XX_all %*% final_result$theta_hat + stack_BQ2 %*% final_result$gamma_hat)
-  
-  # compute model effective degrees of freedom
-  df = compute_edf(XX_all, stack_BQ2, P, final_result$xi_hat, final_rlambda)
-  final_result$df = df
-  
-  # compute sigma
-  y_hat = as.vector(final_result$mu_hat * linkinv(rep(final_result$xi_hat, t)))
-  
-  tt = (c(Y)-y_hat)^2/variance(y_hat)
-  
-  sigma_2 = 1/(n*t-final_result$df)*sum(tt)
-  
-  final_result$sigma_2=sigma_2
-
-  final_result$r_lambda = final_rlambda
-  final_result$l_lambda = final_llambda
   final_result$Ind = Ind
   final_result$rho=rho
   final_result$knots=knots
@@ -309,8 +270,6 @@ RST_GAM = function(Y,X,X_t=NULL,S,Tr,V,d=2,r=1,rho=2,knots=NULL,N=4,initial_x = 
   final_result$U = XX_all
   final_result$BQ = BQ2
   final_result$P = P
-  
-  print('Stage 3 Done')
   
   return(final_result)
   

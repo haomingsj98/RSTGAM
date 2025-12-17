@@ -19,7 +19,11 @@ RST_GAM(
   initial_x = NULL,
   k = 3,
   lambda1,
-  lambda2
+  lambda2,
+  negative_binomial = FALSE,
+  theta_range = NULL,
+  using_fix_weight = TRUE,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -27,7 +31,7 @@ RST_GAM(
 
 \item{X}{matrix. The covariate matrix. Each column represents one covariate.}
 
-\item{X_t}{matrix. A matrix of time-changing covariates, e.g., the accumulated infected cases and human mobility, each column represents a covariate, default as null.}
+\item{X_t}{matrix. A matrix of time-changing covariates, e.g., the accumulated infected cases and human mobility, each column represents a covariate. Default is NULL.}
 
 \item{S}{matrix. The location matrix. Each row indicates the location of one point.}
 
@@ -35,23 +39,31 @@ RST_GAM(
 
 \item{V}{matrix. The vertices matrix of the triangulation.}
 
-\item{d}{integer. The degree of the bivariate spline, default as 2.}
+\item{d}{integer. The degree of the bivariate spline, default is 2.}
 
-\item{r}{integer. The smoothness of the bivariate spline, default as 1.}
+\item{r}{integer. The smoothness of the bivariate spline, default is 1.}
 
-\item{rho}{integer. The degree of the univariate spline, default as 2.}
+\item{rho}{integer. The degree of the univariate spline, default is 2.}
 
 \item{knots}{matrix. The knots matrix of the univariate spline. Usually, it is a (N+2) x p matrix. The r-th column is the knots of r-th covariate. The first element and the last element are the boundary knots.}
 
-\item{N}{integer. The number of interior knots, default as 4.}
+\item{N}{integer. The number of interior knots, default is 4.}
 
 \item{initial_x}{numeric vector. The initial value for the parameter, default is 0.}
 
-\item{k}{The number data thinning folds, default as 3.}
+\item{k}{integer. The number data thinning folds, default is 3.}
 
 \item{lambda1}{numeric. The roughness penalty parameter for bivariate spline estimation.}
 
 \item{lambda2}{numeric. The L1 penalty term for the slack variable.}
+
+\item{negative_binomial}{logical. Whether to fit Negative binomial model.}
+
+\item{theta_range}{vector. A size 2 vector recording the range for hyperparameter of nb family (default is NULL - Poisson Family). If negative_binomial is TRUE and theta_range is not given, default is (1,10).}
+
+\item{using_fix_weight}{logical. Whether to use poisson weight in the NB model to allow fast computation.}
+
+\item{verbose}{logical. Whether to report model fit message.}
 }
 \value{
 A list containing the following elements:
@@ -75,11 +87,13 @@ A list containing the following elements:
 \item{U}{univariate spline basis matrix.}
 \item{BQ}{bivariate spline basis matrix.}
 \item{P}{energy matrix for bivariate spline.}
+\item{theta_nb}{the theta parameter for nb family, Null if fit quasi-poisson model}
 }
 \description{
-This function fits the robust ggam estimation model to account for potentail outliers using bivariate and univariate splines.
+This function fits the robust ggam estimation model to account for potential outliers using bivariate and univariate splines.
 }
 \examples{
+\donttest{
 # Load the example dataset
 data(example_dataset)
 library(BPST)
@@ -177,6 +191,6 @@ lines(X0[, 3], beta0.3, lwd = 3, col = 'red')
 sum((beta0.1-mhat[,1])^2)/1000
 sum((beta0.2-mhat[,2])^2)/1000
 sum((beta0.3-mhat[,3])^2)/1000
-
+}
 
 }

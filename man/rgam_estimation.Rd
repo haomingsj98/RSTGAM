@@ -4,7 +4,7 @@
 \alias{rgam_estimation}
 \title{this function is an intermediate step of model estimation procedure, implementing the gradient descent to get parameter estimates}
 \usage{
-rgam_estimation(Y, X, BQ2, P, lambda1, lambda2, initial_x = NULL, w)
+rgam_estimation(Y, X, BQ2, P, lambda1, lambda2, initial_x = NULL, w, theta_nb)
 }
 \arguments{
 \item{Y:}{the response variable.}
@@ -22,6 +22,8 @@ rgam_estimation(Y, X, BQ2, P, lambda1, lambda2, initial_x = NULL, w)
 \item{initial_x:}{the initial value for the parameter, vector size of m (default as 0).}
 
 \item{w:}{the weight vector for l1 penalty.}
+
+\item{theta_nb:}{the hyperparameter for nb family (default is 0 - Poisson family).}
 }
 \value{
 a list include parameter estimations:

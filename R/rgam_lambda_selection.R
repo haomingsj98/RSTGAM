@@ -11,6 +11,7 @@
 #' @param lambda2 numeric. The L1 penalty term for the slack variable.
 #' @param initial_x numeric vector. The initial value for the parameter, default is 0.
 #' @param w numeric vector. The weight vector for slack estimation.
+#' @param theta_nb: the hyperparameter for nb family (default is 0 - Poisson family).
 #'
 #' @return A list containing the following elements:
 #' \item{theta_hat}{coefficients estimated for univariate functions.}
@@ -23,12 +24,11 @@
 #' @keywords internal
 
 
-rgam_lambda_selection = function(Y, X, BQ, P, lambda1, lambda2, initial_x, w){
+rgam_lambda_selection = function(Y, X, BQ, P, lambda1, lambda2, initial_x, w, theta_nb){
   
+  # note here both poisson and nb family have the same inverse link function
   family = poisson_fam()
   linkinv = family$linkinv
-
-  
   
   # sample size
   n = nrow(Y)
@@ -64,11 +64,11 @@ rgam_lambda_selection = function(Y, X, BQ, P, lambda1, lambda2, initial_x, w){
     l_lambda = lambda2[n2+1-i]
     
     # run the model
-    result = rgam_estimation(Y, X, BQ, P, r_lambda, l_lambda, initial_x = initial_x, w = w)
+    result = rgam_estimation(Y, X, BQ, P, r_lambda, l_lambda, initial_x = initial_x, w = w, theta_nb = theta_nb)
     result$mu_hat = linkinv(X %*% result$theta_hat + BQ %*% result$gamma_hat)
     
     # compute current ebic
-    cur_ebic = EBIC_L(X, BQ, P, result$xi_hat, Y, result$mu_hat)
+    cur_ebic = EBIC_L(X, BQ, P, result$xi_hat, Y, result$mu_hat, theta_nb = theta_nb)
 
     # if ebic decreases, update 
     if(cur_ebic <= cur_l_ebic){
@@ -99,11 +99,11 @@ rgam_lambda_selection = function(Y, X, BQ, P, lambda1, lambda2, initial_x, w){
     r_lambda = lambda1[j]
     
     # run the model
-    result = rgam_estimation(Y, X, BQ, P, r_lambda, l_lambda, initial_x = initial_x, w = w)
+    result = rgam_estimation(Y, X, BQ, P, r_lambda, l_lambda, initial_x = initial_x, w = w, theta_nb = theta_nb)
     result$mu_hat = linkinv(X %*% result$theta_hat + BQ %*% result$gamma_hat)
     
     # compute current ebic
-    cur_ebic = EBIC(X, BQ, P, result$xi_hat, Y, result$mu_hat, r_lambda)
+    cur_ebic = EBIC(X, BQ, P, result$xi_hat, Y, result$mu_hat, r_lambda, theta_nb = theta_nb)
     
     if(cur_ebic <= min_ebic){
       

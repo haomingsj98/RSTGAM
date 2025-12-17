@@ -1,13 +1,13 @@
 Package: RSTGAM
 Title: Robust Spatiotemporal Epidemic Estimation Model with Outlier Detection
-Version: 1.0
+Version: 2.0
 Authors@R: 
     c(
         person(given = "Haoming", family = "Shi", email = "hs75@rice.edu", role = c("aut", "cre")),
         person(given = "Shan", family = "Yu", role = c("aut", "ctb")),
         person(given = "Eric", family = "Chi", role = "aut")
     )
-Description: A robust spatiotemporal epidemic model with simultaneous outlier detection.
+Description: A robust spatiotemporal epidemic model that utilizes bivariate and univariate splines to estimate trends while simultaneously performing outlier detection. This method supports Negative Binomial and Poisson families for count data integration.
 Depends: R (>= 4.3.0)
 License: GPL (>= 2)
 Imports:

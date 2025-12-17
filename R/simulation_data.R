@@ -8,6 +8,7 @@
 #' @param t Integer. The number of time points.
 #' @param off Integer. The number of offset observations. Default is 0.
 #' @param off_value Numeric. The offset value for observations. Default is 100.
+#' @param theta_nb Numeric. The theta value used for Negative Binomial Family, default is 0 for Poisson Family
 #'
 #' @return A list containing:
 #' \item{Y}{Matrix. The response variable.}
@@ -16,10 +17,16 @@
 #' \item{I}{Vector. The accumulated infected cases.}
 #' \item{Mu}{Matrix. The true mean for reponse Y}
 #' \item{off}{Vector. The randomly generated outlier value vector}
+#' \item{Theta_NB}{Numeric. The theta parameter used.}
 #'
 #' @examples
-#' # Generate a simulation dataset with 100 location points, 5 time points, no offset
+#' # Generate a simulation poisson dataset with 100 location points, 5 time points, no offset
 #' sim_data <- Simulation_Data(n = 100, t = 5)
+#' 
+#' @examples
+#' # Generate a simulation Negative Binomial dataset with 100 location points, 
+#' # 5 time points, no offset, and theta = 5
+#' sim_data <- Simulation_Data(n = 100, t = 5, theta_nb = 5)
 #' 
 #' @examples
 #' # Generate a dataset with 100 locations, 5 time points, 
@@ -39,11 +46,11 @@
 #'   scale_colour_gradient(low = '#7fcdbb', high = '#253494')
 #'
 #' @import mgcv
-#' @importFrom stats rpois runif
+#' @importFrom stats rpois runif rnbinom
 #'
 #' @export
 
-Simulation_Data=function(n, t, off = 0, off_value = 100){
+Simulation_Data=function(n, t, off = 0, off_value = 100, theta_nb = 0){
   # Construct the HorseShoe boundary
   fsb=list(fs.boundary())[[1]]
   tt=1
@@ -89,13 +96,30 @@ Simulation_Data=function(n, t, off = 0, off_value = 100){
     # randomly adding outliers
     index_off = sample(1:n, off)
     mu_off=mu_true
-    mu_off[index_off] = mu_off[index_off] + off_value
+    if (off > 0){
+      mu_off[index_off] = mu_off[index_off] + off_value
+    }
     
     # simulate initial counts
-    Y_true=rpois(n,mu_true)
-    
-    Y_off=Y_true
-    Y_off[index_off]=rpois(length(index_off), mu_off[index_off])
+    if (theta_nb != 0){
+      
+      Y_true=rnbinom(n, mu = mu_true, size = theta_nb)
+      
+      Y_off=Y_true
+      if (off > 0){
+        Y_off[index_off]=rnbinom(length(index_off), mu=mu_off[index_off], size = theta_nb)
+      }
+      
+    }else{
+      # generate poisson sample
+      Y_true=rpois(n,mu_true)
+      
+      Y_off=Y_true
+      if(off > 0){
+        Y_off[index_off]=rpois(length(index_off), mu_off[index_off])
+      }
+    }
+
     
     Y[,1] = Y_off
     
@@ -118,11 +142,21 @@ Simulation_Data=function(n, t, off = 0, off_value = 100){
         
         mu_off=mu_true * exp(Off)
 
-        
-        Y_true=rpois(n,mu_true)
-        
-        Y_off=Y_true
-        Y_off[index_off]=rpois(length(index_off), mu_off[index_off])
+        if (theta_nb!=0){
+          Y_true=rnbinom(n, mu = mu_true, size = theta_nb)
+          
+          Y_off=Y_true
+          if (off > 0){
+            Y_off[index_off]=rnbinom(length(index_off), mu=mu_off[index_off], size = theta_nb)
+          }
+          
+        }else{
+          Y_true=rpois(n,mu_true)
+          
+          Y_off=Y_true
+          if(off>0){Y_off[index_off]=rpois(length(index_off), mu_off[index_off])}
+        }
+
         
         Y[,i] = Y_off
 
@@ -135,6 +169,6 @@ Simulation_Data=function(n, t, off = 0, off_value = 100){
     tt=sum(is.na(data))
   }
 
-  return(list(Y=Y,S=data[,(t+1):(t+2)],X=data[,(t+3):(t+5)], Mu = Mu, I = I, off = Off))
+  return(list(Y=Y,S=data[,(t+1):(t+2)],X=data[,(t+3):(t+5)], Mu = Mu, I = I, off = Off, Theta_NB = theta_nb))
 }
 

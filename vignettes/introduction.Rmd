@@ -23,7 +23,7 @@ This vignette demonstrates how to:
 To install the package, you can use the following commands:
 ```{r, message=FALSE, echo=TRUE, eval=TRUE, warning=FALSE, results='hide'}
 # install from GitHub
-remotes::install_github("haomingsj98/RSTGAM")
+# remotes::install_github("haomingsj98/RSTGAM")
 
 # load the required packages
 library(dplyr)

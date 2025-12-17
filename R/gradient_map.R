@@ -9,7 +9,7 @@
 #' @param P A numeric matrix.
 #' @param cur_x A numeric vector.
 #' @param lambda1 A numeric value.
-#' @param theta_nb A numeric value (default is 0).
+#' @param theta_nb: the hyperparameter for nb family (default is 0 - Poisson family).
 #' @return A numeric vector of the gradient map.
 #' 
 #' @useDynLib RSTGAM, .registration = TRUE
@@ -19,7 +19,12 @@
 
 gradient_map <- function(Y, X, BQ2, P, cur_x, lambda1, theta_nb = 0){
   
-  family = poisson_fam()
+  if (theta_nb != 0){
+    family = nb_fam()
+  }
+  else{
+    family = poisson_fam()
+  }
   variance = family$variance
   linkinv = family$linkinv
   mu.eta = family$mu.eta

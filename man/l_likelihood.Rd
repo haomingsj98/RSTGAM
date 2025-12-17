@@ -4,14 +4,16 @@
 \alias{l_likelihood}
 \title{this function helps calculate poisson log likelihood of our model with slack variables}
 \usage{
-l_likelihood(xi_is, Y_it, mu_t)
+l_likelihood(xi_is, Y_it, mu_t, theta_nb = 0)
 }
 \arguments{
-\item{xi_is:}{the estimated slack variables from a given model}
+\item{xi_is}{Numeric vector. The estimated slack variables (size n) for the locations.}
 
-\item{Y_it:}{a n by t matrix representing the observations (counts) at time t (column) and location i (row)}
+\item{Y_it}{Matrix. A n x t matrix of observations (counts), where columns are time points and rows are locations.}
 
-\item{mu_t:}{a size n (location) vector representing the value of mean counts at time t}
+\item{mu_t}{Numeric vector or Matrix. The mean counts. If a vector of size n is provided, it is recycled across all time points. If a matrix (n x t) is provided, it is vectorized directly.}
+
+\item{theta_nb}{Numeric. The hyperparameter (dispersion) for the Negative Binomial family. Default is 0 (Poisson family).}
 }
 \value{
 a value represent the log likelihood

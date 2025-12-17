@@ -1,16 +1,33 @@
 citHeader("To cite RSTGAM in publications, please use:")
 
-bibentry(
-  bibtype = "Manual",
-  title = "RSTGAM: A Robust Spatiotemporal Epidemic Estimation Model with Outlier Detection",
-  author = c(
-    person(given = "Haoming", family = "Shi", email = "hs75@rice.edu", role = c("aut", "cre")),
-    person(given = "Shan", family = "Yu", role = c("aut", "ctb")),
-    person(given = "Eric", family = "Chi", role = "aut")
+c(
+  # 1. The Paper (Primary Citation)
+  bibentry(
+    bibtype = "Article",
+    title = "Robust Spatiotemporal Epidemic Modeling with Integrated Adaptive Outlier Detection",
+    author = c(
+      person(given = "Haoming", family = "Shi"),
+      person(given = "Shan", family = "Yu"),
+      person(given = "Eric C.", family = "Chi")
+    ),
+    journal = "arXiv preprint arXiv:2507.09380",
+    year = "2025",
+    url = "https://arxiv.org/abs/2507.09380"
   ),
-  year = 2024,
-  note = "R package version 1.0",
-  url = "https://github.com/haomingsj98/RSTGAM"
+
+  # 2. The Package (Secondary Citation for specific version)
+  bibentry(
+    bibtype = "Manual",
+    title = "RSTGAM: A Robust Spatiotemporal Epidemic Estimation Model with Outlier Detection",
+    author = c(
+      person(given = "Haoming", family = "Shi", email = "hs75@rice.edu", role = c("aut", "cre")),
+      person(given = "Shan", family = "Yu", role = c("aut", "ctb")),
+      person(given = "Eric", family = "Chi", role = "aut")
+    ),
+    year = "2025",
+    note = "R package version 1.0.0",
+    url = "https://github.com/haomingsj98/RSTGAM"
+  )
 )
 
 citFooter("For more details, visit the GitHub repository.")

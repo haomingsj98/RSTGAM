@@ -9,13 +9,15 @@
 #' @param lambda2: the l1 penalty parameter for slack variable.
 #' @param initial_x: the initial value for the parameter, vector size of m (default as 0).
 #' @param w: the weight vector for l1 penalty. 
+#' @param theta_nb: the hyperparameter for nb family (default is 0 - Poisson family).
+#' 
 #' @return a list include parameter estimations: 
 #' \item{theta_hat}{coefficients estimated for univariate functions.}
 #' \item{gamma_hat}{coefficients estimated for bivariate function.}
 #' \item{xi_hat}{coefficients estimated for slack variable.}
 #' 
 #' @keywords internal
-rgam_estimation = function(Y,X,BQ2,P,lambda1, lambda2, initial_x = NULL, w){
+rgam_estimation = function(Y,X,BQ2,P,lambda1, lambda2, initial_x = NULL, w, theta_nb){
   
   # size of sample
   n = nrow(Y)
@@ -44,12 +46,12 @@ rgam_estimation = function(Y,X,BQ2,P,lambda1, lambda2, initial_x = NULL, w){
   pre_y = pre_x
   
   # set initial step size alpha
-  pre_alpha = initial_step_linesearch(pre_x, Y = Y, X = X, BQ2 = BQ2, P = P, lambda1 = lambda1, lambda2 = lambda2, w = w)
+  pre_alpha = initial_step_linesearch(pre_x, Y = Y, X = X, BQ2 = BQ2, P = P, lambda1 = lambda1, lambda2 = lambda2, w = w, theta_nb = theta_nb)
   
   # set initial hyperparatmer theta
   cur_theta = 1/3
   
-  pre_gradient = gradient_map(Y, X, BQ2, P, cur_x = pre_x, lambda1 = lambda1)
+  pre_gradient = gradient_map(Y, X, BQ2, P, cur_x = pre_x, lambda1 = lambda1, theta_nb = theta_nb)
 
   
   # compute first update of x
@@ -64,7 +66,7 @@ rgam_estimation = function(Y,X,BQ2,P,lambda1, lambda2, initial_x = NULL, w){
   t_curr = 1 # step size for momentum update
   
   # start the algorithm
-  while (tol > 10^-6 & k <= 10^5) {
+  while (tol > 10^-5 & k <= 10^5) {
     
     # momentum step
     t_next   <- (1 + sqrt(1 + 4*t_curr^2)) / 2
@@ -75,7 +77,7 @@ rgam_estimation = function(Y,X,BQ2,P,lambda1, lambda2, initial_x = NULL, w){
     cur_y = cur_x + momentum * (cur_x - pre_x)
     
     # compute current gradient
-    cur_gradient = gradient_map(Y, X, BQ2, P, cur_x = cur_y, lambda1 = lambda1)
+    cur_gradient = gradient_map(Y, X, BQ2, P, cur_x = cur_y, lambda1 = lambda1, theta_nb = theta_nb)
     
 
     # compute the local lipschitz approximation
@@ -109,7 +111,7 @@ rgam_estimation = function(Y,X,BQ2,P,lambda1, lambda2, initial_x = NULL, w){
     
     # update previous alpha
     pre_alpha = cur_alpha
-    
+
     # update x
     pre_x = cur_x
     cur_x = next_x
@@ -121,7 +123,7 @@ rgam_estimation = function(Y,X,BQ2,P,lambda1, lambda2, initial_x = NULL, w){
     pre_gradient = cur_gradient
     
     k = k + 1
-
+    
     t_curr = t_next
 
   }

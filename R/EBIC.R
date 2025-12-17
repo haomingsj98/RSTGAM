@@ -1,16 +1,18 @@
 #' this function helps calculate poisson log likelihood of our model with slack variables
 #'
-#' @param xi_is: the estimated slack variables from a given model
-#' @param Y_it: a n by t matrix representing the observations (counts) at time t (column) and location i (row)
-#' @param mu_t: a size n (location) vector representing the value of mean counts at time t
+#' @param xi_is Numeric vector. The estimated slack variables (size n) for the locations.
+#' @param Y_it Matrix. A n x t matrix of observations (counts), where columns are time points and rows are locations.
+#' @param mu_t Numeric vector or Matrix. The mean counts. If a vector of size n is provided, it is recycled across all time points. If a matrix (n x t) is provided, it is vectorized directly.
+#' @param theta_nb Numeric. The hyperparameter (dispersion) for the Negative Binomial family. Default is 0 (Poisson family).
+#'
 #' @return a value represent the log likelihood
 #' 
 #' 
-#' @importFrom stats dpois
+#' @importFrom stats dpois dnbinom
 #' 
 #' @keywords internal
 #' 
-l_likelihood = function(xi_is, Y_it, mu_t){
+l_likelihood = function(xi_is, Y_it, mu_t, theta_nb = 0){
   
   # size of time (column)
   t = ncol(Y_it)
@@ -28,7 +30,13 @@ l_likelihood = function(xi_is, Y_it, mu_t){
   
   u_exps = u_vec * exps_it
   
-  ll = sum(dpois(Y_vec, u_exps, log = T))
+  if (theta_nb != 0){
+    
+    ll = sum(dnbinom(Y_vec, size = theta_nb, mu = u_exps, log = TRUE))
+    
+  }else{
+    ll = sum(dpois(Y_vec, u_exps, log = TRUE))
+  }
   
   return(ll)
   
@@ -44,13 +52,14 @@ l_likelihood = function(xi_is, Y_it, mu_t){
 #' @param Y_it: a n by t matrix representing the observations (counts) at time t (column) and location i (row) description
 #' @param mu_t: a size n (location) vector representing the value of mean counts at time t description
 #' @param gamma: a regulatory parameter, note, when gamma is 0, we obtain BIC
+#' @param theta_nb: the hyperparameter for nb family (default is 0 - Poisson family).
 #' @return a value represent the eBIC
 #' @keywords internal
 #' 
-EBIC_L = function(X, BQ2, P, xi_is, Y_it, mu_t, gamma = 1){
+EBIC_L = function(X, BQ2, P, xi_is, Y_it, mu_t, gamma = 1, theta_nb = 0){
   
   # obtain the (log) quasi_likelihood of the model
-  log_likelihood = l_likelihood(xi_is, Y_it, mu_t)
+  log_likelihood = l_likelihood(xi_is, Y_it, mu_t, theta_nb)
   
   # number of sample
   N = nrow(Y_it) * ncol(Y_it)
@@ -90,13 +99,14 @@ EBIC_L = function(X, BQ2, P, xi_is, Y_it, mu_t, gamma = 1){
 #' @param mu_t: a size n (location) vector representing the value of mean counts at time t description
 #' @param lambda_r: the penalty parameter for roughness
 #' @param gamma: a regulatory parameter, default as 1, note, when gamma is 0, we obtain BIC
+#' @param theta_nb: the hyperparameter for nb family (default is 0 - Poisson family).
 #' @return a value represent the eBIC
 #' @keywords internal
 #' 
-EBIC = function(X, BQ2, P, xi_is, Y_it, mu_t, lambda_r, gamma = 1){
+EBIC = function(X, BQ2, P, xi_is, Y_it, mu_t, lambda_r, gamma = 1, theta_nb = 0){
   
   # obtain the (log) quasi_likelihood of the model
-  log_likelihood = l_likelihood(xi_is, Y_it, mu_t)
+  log_likelihood = l_likelihood(xi_is, Y_it, mu_t, theta_nb)
   
   # number of sample
   N = nrow(Y_it) * ncol(Y_it)
@@ -167,7 +177,8 @@ compute_edf <- function(X, BQ2, P, xi_is, lambda_r) {
   R = rbind(cbind(zero2, P, zero3), zero4)
   R = rbind(zero1, R)
   
-  temp1 = crossprod(H, H) + lambda_r * R
+  HtH = crossprod(H, H)
+  temp1 = HtH + lambda_r * R
   
   # Compute the SVD of A
   svd_temp = svd(temp1)
@@ -183,7 +194,8 @@ compute_edf <- function(X, BQ2, P, xi_is, lambda_r) {
   # Construct the pseudoinverse of A
   inv_temp1 = V %*% tcrossprod(D_pseudo, U)
   
-  temp2 = H %*% tcrossprod(inv_temp1, H)
+  # temp2 = H %*% tcrossprod(inv_temp1, H)
+  temp2 = HtH %*% inv_temp1
   
   edf = sum(diag(temp2))
   

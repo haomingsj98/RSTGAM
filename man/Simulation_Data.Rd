@@ -4,7 +4,7 @@
 \alias{Simulation_Data}
 \title{Generate a Simulation Dataset}
 \usage{
-Simulation_Data(n, t, off = 0, off_value = 100)
+Simulation_Data(n, t, off = 0, off_value = 100, theta_nb = 0)
 }
 \arguments{
 \item{n}{Integer. The number of location points.}
@@ -14,6 +14,8 @@ Simulation_Data(n, t, off = 0, off_value = 100)
 \item{off}{Integer. The number of offset observations. Default is 0.}
 
 \item{off_value}{Numeric. The offset value for observations. Default is 100.}
+
+\item{theta_nb}{Numeric. The theta value used for Negative Binomial Family, default is 0 for Poisson Family}
 }
 \value{
 A list containing:
@@ -23,14 +25,19 @@ A list containing:
 \item{I}{Vector. The accumulated infected cases.}
 \item{Mu}{Matrix. The true mean for reponse Y}
 \item{off}{Vector. The randomly generated outlier value vector}
+\item{Theta_NB}{Numeric. The theta parameter used.}
 }
 \description{
 This function generates a dataset for a simulation study, including the response variable,
 location information, covariates, and accumulated infected cases.
 }
 \examples{
-# Generate a simulation dataset with 100 location points, 5 time points, no offset
+# Generate a simulation poisson dataset with 100 location points, 5 time points, no offset
 sim_data <- Simulation_Data(n = 100, t = 5)
+
+# Generate a simulation Negative Binomial dataset with 100 location points, 
+# 5 time points, no offset, and theta = 5
+sim_data <- Simulation_Data(n = 100, t = 5, theta_nb = 5)
 
 # Generate a dataset with 100 locations, 5 time points, 
 # 2 randomly selected outliers with value of 100

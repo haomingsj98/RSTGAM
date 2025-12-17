@@ -35,11 +35,12 @@ adaptive_step_size <- function(pre_step, pre_theta, cur_L) {
 #' @param lambda1: the penalty parameter for roughness
 #' @param lambda2: the penalty parameter for xi
 #' @param w: the weight vector for l1 penalty
+#' @param theta_nb: the hyperparameter for nb family
 #' @return a value represent the initial step size
 #' 
 #' 
 #' @keywords internal
-initial_step_linesearch <- function(pre_x, initial_step = 10^-8, Y, X, BQ2, P, lambda1, lambda2, w) {
+initial_step_linesearch <- function(pre_x, initial_step = 10^-8, Y, X, BQ2, P, lambda1, lambda2, w, theta_nb) {
   
   cur_a = initial_step
   
@@ -47,7 +48,7 @@ initial_step_linesearch <- function(pre_x, initial_step = 10^-8, Y, X, BQ2, P, l
   
   search_seq = exp(seq(log(initial_step),log(10),length.out=200))
   
-  pre_gradient = gradient_map(Y, X, BQ2, P, pre_x, lambda1)
+  pre_gradient = gradient_map(Y, X, BQ2, P, pre_x, lambda1, theta_nb = theta_nb)
   
   for (cur_a in search_seq) {
     
@@ -55,7 +56,7 @@ initial_step_linesearch <- function(pre_x, initial_step = 10^-8, Y, X, BQ2, P, l
     
     cur_x = proximal_map(cur_z, lambda2, cur_a, n = nrow(Y), w = w)
     
-    cur_gradient = gradient_map(Y, X, BQ2, P, cur_x, lambda1)
+    cur_gradient = gradient_map(Y, X, BQ2, P, cur_x, lambda1, theta_nb = theta_nb)
     
     # compute L
     diff_gradient <- cur_gradient - pre_gradient
@@ -66,7 +67,6 @@ initial_step_linesearch <- function(pre_x, initial_step = 10^-8, Y, X, BQ2, P, l
     if(is.nan(cur_L)){
       
       return(cur_a/100)
-      break
       
     }
     
@@ -76,10 +76,8 @@ initial_step_linesearch <- function(pre_x, initial_step = 10^-8, Y, X, BQ2, P, l
     if(tol >= 1/sqrt(2) & tol <= 2){
       
       return(cur_a)
-      break
       
     }
-    
     
   }
   

@@ -4,7 +4,7 @@
 \alias{EBIC}
 \title{this function compute the EBIC measure of the model}
 \usage{
-EBIC(X, BQ2, P, xi_is, Y_it, mu_t, lambda_r, gamma = 1)
+EBIC(X, BQ2, P, xi_is, Y_it, mu_t, lambda_r, gamma = 1, theta_nb = 0)
 }
 \arguments{
 \item{X:}{the univariate basis function matrix}
@@ -22,6 +22,8 @@ EBIC(X, BQ2, P, xi_is, Y_it, mu_t, lambda_r, gamma = 1)
 \item{lambda_r:}{the penalty parameter for roughness}
 
 \item{gamma:}{a regulatory parameter, default as 1, note, when gamma is 0, we obtain BIC}
+
+\item{theta_nb:}{the hyperparameter for nb family (default is 0 - Poisson family).}
 }
 \value{
 a value represent the eBIC

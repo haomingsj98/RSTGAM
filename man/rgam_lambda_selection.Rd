@@ -4,7 +4,7 @@
 \alias{rgam_lambda_selection}
 \title{Internal Function: Select Penalization Parameters for RST_GAM}
 \usage{
-rgam_lambda_selection(Y, X, BQ, P, lambda1, lambda2, initial_x, w)
+rgam_lambda_selection(Y, X, BQ, P, lambda1, lambda2, initial_x, w, theta_nb)
 }
 \arguments{
 \item{Y}{matrix. The response variable.}
@@ -22,6 +22,8 @@ rgam_lambda_selection(Y, X, BQ, P, lambda1, lambda2, initial_x, w)
 \item{initial_x}{numeric vector. The initial value for the parameter, default is 0.}
 
 \item{w}{numeric vector. The weight vector for slack estimation.}
+
+\item{theta_nb:}{the hyperparameter for nb family (default is 0 - Poisson family).}
 }
 \value{
 A list containing the following elements:

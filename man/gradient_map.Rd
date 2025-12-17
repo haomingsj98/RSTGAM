@@ -19,7 +19,7 @@ gradient_map(Y, X, BQ2, P, cur_x, lambda1, theta_nb = 0)
 
 \item{lambda1}{A numeric value.}
 
-\item{theta_nb}{A numeric value (default is 0).}
+\item{theta_nb:}{the hyperparameter for nb family (default is 0 - Poisson family).}
 }
 \value{
 A numeric vector of the gradient map.

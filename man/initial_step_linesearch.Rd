@@ -13,7 +13,8 @@ initial_step_linesearch(
   P,
   lambda1,
   lambda2,
-  w
+  w,
+  theta_nb
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ initial_step_linesearch(
 \item{lambda2:}{the penalty parameter for xi}
 
 \item{w:}{the weight vector for l1 penalty}
+
+\item{theta_nb:}{the hyperparameter for nb family}
 }
 \value{
 a value represent the initial step size
