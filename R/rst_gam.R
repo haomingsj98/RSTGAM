@@ -19,7 +19,7 @@
 #' @param lambda1 numeric. The roughness penalty parameter for bivariate spline estimation.
 #' @param lambda2 numeric. The L1 penalty term for the slack variable.
 #' @param negative_binomial logical. Whether to fit Negative binomial model.
-#' @param theta_range vector. A size 2 vector recording the range for hyperparameter of nb family (default is NULL - Poisson Family). If negative_binomial is TRUE and theta_range is not given, default is (1,10).
+#' @param theta_range vector. A size 2 vector recording the range for hyperparameter of nb family (default is NULL - Poisson Family). If negative_binomial is TRUE and theta_range is not given, default is (0.01,10).
 #' @param using_fix_weight logical. Whether to use poisson weight in the NB model to allow fast computation.
 #' @param verbose logical. Whether to report model fit message.
 #'

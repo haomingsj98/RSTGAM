@@ -59,7 +59,7 @@ RST_GAM(
 
 \item{negative_binomial}{logical. Whether to fit Negative binomial model.}
 
-\item{theta_range}{vector. A size 2 vector recording the range for hyperparameter of nb family (default is NULL - Poisson Family). If negative_binomial is TRUE and theta_range is not given, default is (1,10).}
+\item{theta_range}{vector. A size 2 vector recording the range for hyperparameter of nb family (default is NULL - Poisson Family). If negative_binomial is TRUE and theta_range is not given, default is (0.01,10).}
 
 \item{using_fix_weight}{logical. Whether to use poisson weight in the NB model to allow fast computation.}
 
