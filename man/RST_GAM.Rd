@@ -23,6 +23,7 @@ RST_GAM(
   negative_binomial = FALSE,
   theta_range = NULL,
   using_fix_weight = TRUE,
+  slack_weight = NULL,
   verbose = FALSE
 )
 }
@@ -63,6 +64,8 @@ RST_GAM(
 
 \item{using_fix_weight}{logical. Whether to use poisson weight in the NB model to allow fast computation.}
 
+\item{slack_weight}{vector. A vector of weight for slack estimates, default is null and will be obtained using data-thinning.}
+
 \item{verbose}{logical. Whether to report model fit message.}
 }
 \value{
@@ -74,6 +77,7 @@ A list containing the following elements:
 \item{df}{degree of freedom of the model.}
 \item{r_lambda}{the selected roughness penalization parameter.}
 \item{l_lambda}{the selected L1 penalization parameter.}
+\item{weight}{the adaptive slack weight used by the model.}
 \item{Ind}{the index of the inside observation.}
 \item{rho}{the degree of univariate spline, same as input argument.}
 \item{d}{the degree of bivariate spline, same as input argument.}

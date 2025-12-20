@@ -56,6 +56,7 @@ A list containing the following elements:
 \item{r_lambda}{the selected roughness penalization parameter.}
 \item{l_lambda}{the selected L1 penalization parameter.}
 \item{sigma_2}{estimated pearson sigma^2.}
+\item{weight}{the adaptive slack weight used by the model.}
 }
 \description{
 This function fits the robust ggam estimation model to account for potentail outliers using bivariate and univariate splines with poisson family.

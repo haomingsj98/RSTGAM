@@ -21,6 +21,7 @@
 #' @param negative_binomial logical. Whether to fit Negative binomial model.
 #' @param theta_range vector. A size 2 vector recording the range for hyperparameter of nb family (default is NULL - Poisson Family). If negative_binomial is TRUE and theta_range is not given, default is (0.01,10).
 #' @param using_fix_weight logical. Whether to use poisson weight in the NB model to allow fast computation.
+#' @param slack_weight vector. A vector of weight for slack estimates, default is null and will be obtained using data-thinning.
 #' @param verbose logical. Whether to report model fit message.
 #'
 #' @return A list containing the following elements:
@@ -31,6 +32,7 @@
 #' \item{df}{degree of freedom of the model.}
 #' \item{r_lambda}{the selected roughness penalization parameter.}
 #' \item{l_lambda}{the selected L1 penalization parameter.}
+#' \item{weight}{the adaptive slack weight used by the model.}
 #' \item{Ind}{the index of the inside observation.}
 #' \item{rho}{the degree of univariate spline, same as input argument.}
 #' \item{d}{the degree of bivariate spline, same as input argument.}
@@ -157,7 +159,7 @@
 #' @export
 
 RST_GAM = function(Y,X,X_t=NULL,S,Tr,V,d=2,r=1,rho=2,knots=NULL,N=4,initial_x = NULL, k = 3,
-                       lambda1, lambda2, negative_binomial = FALSE, theta_range = NULL, using_fix_weight = TRUE, verbose = FALSE){
+                       lambda1, lambda2, negative_binomial = FALSE, theta_range = NULL, using_fix_weight = TRUE, slack_weight = NULL, verbose = FALSE){
   
   if (negative_binomial & is.null(theta_range)){
     theta_range = c(0.01, 10) # default theta value for nb family
@@ -251,7 +253,7 @@ RST_GAM = function(Y,X,X_t=NULL,S,Tr,V,d=2,r=1,rho=2,knots=NULL,N=4,initial_x = 
   else{
     if(verbose) message('Fit (Quasi)-Poisson Model')
     # fit quasi-poisson model
-    final_result = RST_GAM_poisson(Y, XX_all, stack_BQ2, P, lambda1, lambda2, initial_x, k, Ind)
+    final_result = RST_GAM_poisson(Y, XX_all, stack_BQ2, P, lambda1, lambda2, initial_x, k, Ind, fix_weight = slack_weight)
     final_result$theta_nb = NULL
   }
   

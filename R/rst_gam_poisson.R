@@ -28,6 +28,7 @@
 #' \item{r_lambda}{the selected roughness penalization parameter.}
 #' \item{l_lambda}{the selected L1 penalization parameter.}
 #' \item{sigma_2}{estimated pearson sigma^2.}
+#' \item{weight}{the adaptive slack weight used by the model.}
 #'
 #' @importFrom stats rmultinom 
 #' 
@@ -126,6 +127,8 @@ RST_GAM_poisson = function(Y, X, BQ, P, lambda1, lambda2, initial_x, k, Ind, the
 
   final_result$r_lambda = final_rlambda
   final_result$l_lambda = final_llambda
+  
+  final_result$weight = final_w
 
   
   return(final_result)
