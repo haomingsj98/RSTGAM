@@ -24,7 +24,7 @@ RST_GAM(
   theta_range = NULL,
   using_fix_weight = TRUE,
   slack_weight = NULL,
-  verbose = FALSE
+  verbose = TRUE
 )
 }
 \arguments{

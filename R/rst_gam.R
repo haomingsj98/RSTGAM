@@ -159,7 +159,7 @@
 #' @export
 
 RST_GAM = function(Y,X,X_t=NULL,S,Tr,V,d=2,r=1,rho=2,knots=NULL,N=4,initial_x = NULL, k = 3,
-                       lambda1, lambda2, negative_binomial = FALSE, theta_range = NULL, using_fix_weight = TRUE, slack_weight = NULL, verbose = FALSE){
+                       lambda1, lambda2, negative_binomial = FALSE, theta_range = NULL, using_fix_weight = TRUE, slack_weight = NULL, verbose = TRUE){
   
   if (negative_binomial & is.null(theta_range)){
     theta_range = c(0.01, 10) # default theta value for nb family
@@ -241,8 +241,10 @@ RST_GAM = function(Y,X,X_t=NULL,S,Tr,V,d=2,r=1,rho=2,knots=NULL,N=4,initial_x = 
     if(verbose) message(sprintf('Fit Negative Binomial Model with Theta Range: [%s, %s]', theta_range[1], theta_range[2]))
     
     # construct weights using Poisson model
-    if (using_fix_weight){
+    if (using_fix_weight & is.null(slack_weight)){
       detected_weights = RST_GAM_poisson(Y, XX_all, stack_BQ2, P, lambda1, lambda2, initial_x, k, Ind, fix_weight = NULL, report_weight = TRUE)
+    }else if(using_fix_weight & !is.null(slack_weight)){
+      detected_weights = slack_weight
     }else{
       detected_weights = NULL
     }
