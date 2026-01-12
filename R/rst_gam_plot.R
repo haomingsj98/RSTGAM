@@ -3,6 +3,8 @@
 #' This function processes the output of the robust gGAM estimation model (RST_GAM) to generate summaries and prepare data for visualization.
 #'
 #' @param model list. The output from the RST_GAM model.
+#' @param X0_pred matrix. Optional. A user-defined grid of covariate values for evaluating univariate components. 
+#' If \code{NULL}, an equally spaced grid is automatically generated for each covariate based on the range of the input data.
 #' @param uni_sample integer. The number of evenly spaced points used to evaluate univariate components, default is 1000.
 #' @param S matrix. The location matrix. Each row indicates the location of one point.
 #'
@@ -25,8 +27,7 @@
 #' 
 #' @export
 
-RSTGAM_plot = function(model, uni_sample = 1000, S){
-  
+RSTGAM_plot = function(model, X0_pred = NULL, uni_sample = 1000, S){
   # obtain the bivariate function estimation
   est_bivariate = as.vector(model$BQ %*% model$gamma_hat)
   
@@ -38,23 +39,27 @@ RSTGAM_plot = function(model, uni_sample = 1000, S){
                     Slack = est_slack, Beta = est_bivariate)
   
   # obtain the equally spaced points for each components
-  p_ind = ncol(model$X)
-  X_t_exists = !is.null(model$X_t)  # Check if X_t is NULL
-  p_dep = if (X_t_exists) ncol(model$X_t) else 0
-  nP = p_ind + p_dep
-  X0 = matrix(0, ncol = nP, nrow = uni_sample)
-  
-  # Time-independent components
-  for (i in 1:p_ind) {
-    X0[, i] = seq(min(model$X[, i]), max(model$X[, i]), length.out = uni_sample)
-  }
-  
-  # Time-dependent components (only if X_t is not NULL)
-  if (X_t_exists) {
-    for (j in (p_ind + 1):nP) {
-      X0[, j] = seq(min(model$X_t[, (j - p_ind)]), 
-                    max(model$X_t[, (j - p_ind)]), length.out = uni_sample)
+  if(is.null(X0_pred)){
+    p_ind = ncol(model$X)
+    X_t_exists = !is.null(model$X_t)  # Check if X_t is NULL
+    p_dep = if (X_t_exists) ncol(model$X_t) else 0
+    nP = p_ind + p_dep
+    X0 = matrix(0, ncol = nP, nrow = uni_sample)
+    
+    # Time-independent components
+    for (i in 1:p_ind) {
+      X0[, i] = seq(min(model$X[, i]), max(model$X[, i]), length.out = uni_sample)
     }
+    
+    # Time-dependent components (only if X_t is not NULL)
+    if (X_t_exists) {
+      for (j in (p_ind + 1):nP) {
+        X0[, j] = seq(min(model$X_t[, (j - p_ind)]), 
+                      max(model$X_t[, (j - p_ind)]), length.out = uni_sample)
+      }
+    }
+  }else{
+    X0 = X0_pred
   }
   
   # generate the basis matrix

@@ -38,6 +38,12 @@ RST_GAM_nb = function(Y, X, BQ, P, lambda1, lambda2, initial_x, k, Ind, theta_ra
   lower=theta_range[1]
   upper=theta_range[2]
   result1=RST_GAM_poisson(Y, X, BQ, P, lambda1, lambda2, initial_x, k, Ind, theta_nb = upper, fix_weight = fix_weight)
+  if (lower == upper){
+    # return result if theta is fixed
+    result1$theta_nb = upper
+    return(result1)
+    
+  }
   U_sigma=result1$sigma_2
   
   result2=RST_GAM_poisson(Y, X, BQ, P, lambda1, lambda2, initial_x, k, Ind, theta_nb = lower, fix_weight = fix_weight)

@@ -248,7 +248,6 @@ RST_GAM = function(Y,X,X_t=NULL,S,Tr,V,d=2,r=1,rho=2,knots=NULL,N=4,initial_x = 
     }else{
       detected_weights = NULL
     }
-  
     # fit nb model with fixed slack weight
     final_result = RST_GAM_nb(Y, XX_all, stack_BQ2, P, lambda1, lambda2, initial_x, k, Ind, theta_range = theta_range, fix_weight = detected_weights)
   }

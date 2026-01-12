@@ -4,10 +4,13 @@
 \alias{RSTGAM_plot}
 \title{Summarize and Prepare RST_GAM Results for Plotting}
 \usage{
-RSTGAM_plot(model, uni_sample = 1000, S)
+RSTGAM_plot(model, X0_pred = NULL, uni_sample = 1000, S)
 }
 \arguments{
 \item{model}{list. The output from the RST_GAM model.}
+
+\item{X0_pred}{matrix. Optional. A user-defined grid of covariate values for evaluating univariate components.
+If \code{NULL}, an equally spaced grid is automatically generated for each covariate based on the range of the input data.}
 
 \item{uni_sample}{integer. The number of evenly spaced points used to evaluate univariate components, default is 1000.}
 
